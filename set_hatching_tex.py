@@ -41,21 +41,25 @@ try:
                     tex_isfile.append(True)
                 else:
                     tex_isfile.append(False)
-                    
-            if not all(tex_isfile):
-            
-                true_idcs = [i+1 for i, x in enumerate(tex_isfile) if x is True]
-                
-                for idx, val in enumerate(tex_isfile):
-                    if val is False:
-                        slot = None
-                        if idx+1 < true_idcs[0]:
-                            slot = true_idcs[0]
-                        else:
-                            slot = true_idcs[-1]
 
-                        next_available = target.parm("hatchingTex{num}".format(num = slot)).eval()
-                        target.parm("hatchingTex{num}".format(num = idx+1)).set(hou.text.collapseCommonVars(next_available, vars = ["$HIP"]))             
+            valid_tex_index = list(range(1, 8))
+
+            if not all(tex_isfile):
+                valid_tex_index = [i+1 for i, x in enumerate(tex_isfile) if x is True]
+                
+            for idx, val in enumerate(tex_isfile):
+                parm_index = idx + 1
+                slot = None
+                if val is False:
+                    if parm_index < valid_tex_index[0]:
+                        slot = valid_tex_index[0]
+                    else:
+                        slot = valid_tex_index[-1]
+                else:
+                    slot = parm_index
+
+                next_available = target.parm("hatchingTex{num}".format(num = slot)).eval()
+                target.parm("hatchingTex{num}".format(num = idx+1)).set(hou.text.collapseCommonVars(next_available, vars = ["$HIP"]))             
         else:
             raise Exception("Cancelled")
             
