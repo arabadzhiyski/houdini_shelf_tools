@@ -8,7 +8,6 @@ import os
 
 tool_title= "Set Hatching Textures"
 filter_type = "pxrstylizedhatching::3.0"
-tex_isfile = []
 selected = hou.selectedNodes()
 target = None
 
@@ -20,6 +19,9 @@ try:
         
     if target.type() == hou.nodeType(hou.vopNodeTypeCategory(), filter_type):
         
+        # Ask user to select a tex file sequence.
+        # A full sequence will be 1-8.
+        # Partial sequences e.g. 3-7 will be clamped.
         tex_seq = hou.ui.selectFile(start_directory = "$HIP/tex",
                                     title = tool_title,
                                     collapse_sequences = True,
@@ -31,33 +33,39 @@ try:
                                     chooser_mode = hou.fileChooserMode.Read)
     
         if(tex_seq != ""):
+            file_paths = []
+            valid_tex_index = []
+
+            # Check if the files actually exist on disk
             for n in range(8):
-                parm_name = "hatchingTex{num}".format(num = n+1)
-                tex_parm = target.parm(parm_name)
-                abs_tex_file_path = hou.text.expandStringAtFrame(tex_seq, n+1)
-                tex_parm.set(hou.text.collapseCommonVars(abs_tex_file_path, vars = ["$HIP"]))
-
+                abs_tex_file_path = hou.text.expandStringAtFrame(tex_seq, n + 1)
                 if os.path.isfile(abs_tex_file_path):
-                    tex_isfile.append(True)
+                    file_paths.append((abs_tex_file_path, True))
+                    valid_tex_index.append(n)
                 else:
-                    tex_isfile.append(False)
+                    file_paths.append((abs_tex_file_path, False))
 
-            if not all(tex_isfile):
-                valid_tex_index = [i+1 for i, x in enumerate(tex_isfile) if x is True]
-                
-                for idx, val in enumerate(tex_isfile):
-                    parm_index = idx + 1
-                    slot = None
-                    if val is False:
-                        if parm_index < valid_tex_index[0]:
-                            slot = valid_tex_index[0]
-                        else:
-                            slot = valid_tex_index[-1]
+            for idx, val in enumerate(file_paths):
+                parm_index = idx + 1
+                parm_name = "hatchingTex{num}".format(num = parm_index)
+                tex_parm = target.parm(parm_name)
+                target_index = None
+
+                # Clamp if tex files do not exist on disk.
+                # This may be the case if the file was deleted
+                # while the user was browsing for it.
+                if val[1] is False:
+                    if idx < valid_tex_index[0]:
+                        # Take the index of the first valid tex file
+                        target_index = valid_tex_index[0]
                     else:
-                        slot = parm_index
-
-                    next_available = target.parm("hatchingTex{num}".format(num = slot)).eval()
-                    target.parm("hatchingTex{num}".format(num = idx+1)).set(hou.text.collapseCommonVars(next_available, vars = ["$HIP"]))             
+                        # Take the index of the last valid tex file
+                        target_index = valid_tex_index[-1]
+                else:
+                    target_index = idx
+                
+                # Finally set the string field parameters
+                tex_parm.set(hou.text.collapseCommonVars(file_paths[target_index][0], vars = ["$HIP"]))             
         else:
             raise Exception("Cancelled")
             
