@@ -1,7 +1,7 @@
 # Sets the 'hatchingTex#' multiparm string fields of PxrStylizedHatching display filter
 # from a sequence of up to 8 *.tex files in Houdini. If the sequence contains less than
-# 8 textures, the beginning and the end will be clamped.
-# It's yours to use for free and I hope you find it useful. Happy rendering!
+# 8 textures, the beginning and the end will be clamped (repeated).
+# It's yours to use for free. Happy hatching!
 
 import hou
 import os
@@ -48,17 +48,16 @@ try:
                 
                 for idx, val in enumerate(tex_isfile):
                     if val is False:
+                        next_available = None
                         if idx+1 < true_idcs[0]:
-                        
-                            first_available = target.parm("hatchingTex{num}".format(num = true_idcs[0])).eval()
-                            target.parm("hatchingTex{num}".format(num = idx+1)).set(hou.text.collapseCommonVars(first_available,vars = ["$HIP"]))
-                            
+                            next_available = target.parm("hatchingTex{num}".format(num = true_idcs[0])).eval()
                         else:
-                            last_available = target.parm("hatchingTex{num}".format(num = true_idcs[-1])).eval()
-                            target.parm("hatchingTex{num}".format(num = idx+1)).set(hou.text.collapseCommonVars(last_available,vars = ["$HIP"]))
-                                  
+                            next_available = target.parm("hatchingTex{num}".format(num = true_idcs[-1])).eval()
+                        
+                        target.parm("hatchingTex{num}".format(num = idx+1)).set(hou.text.collapseCommonVars(next_available, vars = ["$HIP"]))             
         else:
             raise Exception("Cancelled")
+            
     else:
         raise Exception("Target node must be of type {required_type}, not {selected_type}".format(required_type = filter_type,
                                                                                                   selected_type = target.type().name()))
