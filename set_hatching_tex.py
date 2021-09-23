@@ -48,12 +48,13 @@ try:
                 
                 for idx, val in enumerate(tex_isfile):
                     if val is False:
-                        next_available = None
+                        slot = None
                         if idx+1 < true_idcs[0]:
-                            next_available = target.parm("hatchingTex{num}".format(num = true_idcs[0])).eval()
+                            slot = true_idcs[0]
                         else:
-                            next_available = target.parm("hatchingTex{num}".format(num = true_idcs[-1])).eval()
-                        
+                            slot = true_idcs[-1]
+
+                        next_available = target.parm("hatchingTex{num}".format(num = slot)).eval()
                         target.parm("hatchingTex{num}".format(num = idx+1)).set(hou.text.collapseCommonVars(next_available, vars = ["$HIP"]))             
         else:
             raise Exception("Cancelled")
