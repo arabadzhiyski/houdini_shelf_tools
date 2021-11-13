@@ -121,16 +121,21 @@ try:
             else:
                 raise Exception("Cancelled")
     
+    
     nullNamePrefix = hou.ui.readInput("Enter null name prefix.",
-                           buttons = ("OK", "Cancel"),
+                           buttons = ("OK", "No Prefix", "Cancel"),
                            severity = hou.severityType.Message,
                            default_choice = 0,
                            close_choice = -1,
-                           help = "The null name will be the attribute value prefixed by this. This will not auto-insert underscores.",
+                           help = "The null name will be the attribute value prefixed by this.",
                            title = tool_title,
-                           initial_contents = None) 
-    if nullNamePrefix[0] == 1:
+                           initial_contents = "OUT_") 
+    if nullNamePrefix[0] == -1:
+        raise Exception("Aborted")
+    elif nullNamePrefix[0] == 2:
         raise Exception("Cancelled")
+    elif nullNamePrefix[0] == 1:
+        nullNamePrefix = ""
     else:
         nullNamePrefix = re.sub("[^\w]", "_", nullNamePrefix[1], flags = re.M)
 
