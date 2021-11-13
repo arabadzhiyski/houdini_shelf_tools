@@ -35,15 +35,15 @@ try:
     elif pointStrAttribs and primStrAttribs:
         keys = validAttribTypes.keys()
         targetAttribTypeIdx = hou.ui.selectFromList(keys,
-                                          default_choices = (),
-                                          exclusive = True,
-                                          message = "Select Attribute Type",
-                                          title = tool_title,
-                                          column_header = "Attrib Type",
-                                          num_visible_rows = 5,
-                                          clear_on_cancel = True,
-                                          width = 0,
-                                          height = 200)
+                                                    default_choices = (),
+                                                    exclusive = True,
+                                                    message = "Select Attribute Type",
+                                                    title = tool_title,
+                                                    column_header = "Attrib Type",
+                                                    num_visible_rows = 5,
+                                                    clear_on_cancel = True,
+                                                    width = 0,
+                                                    height = 200)
         if targetAttribTypeIdx == ():
             raise Exception("Cancelled.")
         
@@ -71,15 +71,15 @@ try:
         
     attribTypeName = str(targetAttribType).split(".")[1]
     targetAttribNameIdx = hou.ui.selectFromList(strAttribList,
-                                  default_choices = (),
-                                  exclusive = True,
-                                  message = "Select a String {t} Attribute.".format(t = attribTypeName),
-                                  title = tool_title,
-                                  column_header = "Str {s} Attribs".format(s = attribTypeName),
-                                  num_visible_rows = 5,
-                                  clear_on_cancel = True,
-                                  width = 0,
-                                  height = 200)
+                                                default_choices = (),
+                                                exclusive = True,
+                                                message = "Select a String {t} Attribute.".format(t = attribTypeName),
+                                                title = tool_title,
+                                                column_header = "Str {s} Attribs".format(s = attribTypeName),
+                                                num_visible_rows = 5,
+                                                clear_on_cancel = True,
+                                                width = 0,
+                                                height = 200)
     if targetAttribNameIdx == ():
         raise Exception("Cancelled")
     else:
@@ -107,15 +107,15 @@ try:
             raise Exception("Cancelled")
         elif whichVals == 0:
             targetAttribValsIdx = hou.ui.selectFromList(targetAttribVals,
-                                                 default_choices = (),
-                                                 exclusive = False,
-                                                 message = "Select Attribute Value(s)",
-                                                 title = tool_title,
-                                                 column_header = "Str {s} Attribs".format(s = attribTypeName),
-                                                 num_visible_rows = 5,
-                                                 clear_on_cancel = True,
-                                                 width = 0,
-                                                 height = 0)
+                                                        default_choices = (),
+                                                        exclusive = False,
+                                                        message = "Select Attribute Value(s)",
+                                                        title = tool_title,
+                                                        column_header = "{a}".format(s = targetAttribName),
+                                                        num_visible_rows = 10,
+                                                        clear_on_cancel = True,
+                                                        width = 0,
+                                                        height = 0)
             if targetAttribValsIdx:
                 targetAttribVals = [targetAttribVals[i] for i in targetAttribValsIdx]
             else:
@@ -123,13 +123,13 @@ try:
     
     
     nullNamePrefix = hou.ui.readInput("Enter null name prefix.",
-                           buttons = ("OK", "No Prefix", "Cancel"),
-                           severity = hou.severityType.Message,
-                           default_choice = 0,
-                           close_choice = -1,
-                           help = "The null name will be the attribute value prefixed by this.",
-                           title = tool_title,
-                           initial_contents = "OUT_") 
+                                        buttons = ("OK", "No Prefix", "Cancel"),
+                                        severity = hou.severityType.Message,
+                                        default_choice = 0,
+                                        close_choice = -1,
+                                        help = "The null name will be the attribute value prefixed by this.",
+                                        title = tool_title,
+                                        initial_contents = "OUT_") 
     if nullNamePrefix[0] == -1:
         raise Exception("Aborted")
     elif nullNamePrefix[0] == 2:
