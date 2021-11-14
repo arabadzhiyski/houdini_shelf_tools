@@ -1,5 +1,5 @@
 # This Houdini shelf tool will split your sop geo using blast nodes based on point or prim string attributes.
-# It will ask you to select either all attribute values found or specific once.
+# It will ask you to select either all attribute values found or specific ones.
 # Have fun!
 
 import hou
